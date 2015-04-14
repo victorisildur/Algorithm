@@ -2,6 +2,7 @@ package uniquePaths;
 
 public class Solution {
 	public int uniquePaths(int m, int n) {
+		// dp solution
 		int[][] mat = new int[m + 1][n + 1];
 		mat[m - 1][n] = 1;
 		for (int r = m - 1; r >= 0; r--) {
