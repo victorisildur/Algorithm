@@ -1,1 +1,3 @@
-easy/*/bin
+/*/*/bin
+/*/*/.metadata
+/*/.metadata
