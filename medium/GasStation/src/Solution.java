@@ -18,6 +18,7 @@ public class Solution {
 		}
 		
 		if (total >= 0) return pos;
+
 		return -1;
 	}
 }
