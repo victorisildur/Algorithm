@@ -1,5 +1,5 @@
 var expect = require('expect'),
-    longest = require('./longest');
+    longest = require('./longest2');
 
 expect(
     longest('()()')
