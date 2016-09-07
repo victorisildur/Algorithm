@@ -1,87 +1,61 @@
-/* @param {string} p -> pattern
- * @return {{char, finite}[]} -> states
- */
-var makeStates = function(p) {
-    var states = [];
-    for (var i = 0, l = p.length; i<l; i++) {
-        var char = p[i];
-        if (char !== '*') {
-            states.push({char: char, infinite: false});
-        } else {
-            states[states.length - 1].infinite = true;
-        }
-    }
-    return states;
-};
-
-/* @func: transfer state
- * @return: if nowhere to go, return -1. 
- *          if remain current input, goto next state, return -2.
- *          else return next state
- */
-var nextState = function(states, currStateIdx, nextStateIdx, char) {
-    var currState = states[currStateIdx],
-        nextState = states[nextStateIdx];
-    console.info('  calling nextState().. currState:' + JSON.stringify(currState) +
-                 ',nextState:' + JSON.stringify(nextState) +
-                 ',char:' + char);
-    if (!currState)
-        return -1;
-    if (nextState && nextState.char === char) {
-        return nextStateIdx;
-    }
-    if (currState.char === '.' ||
-        currState.char === char
-       ) {
-        if (currState.infinite === true) {
-            return currStateIdx;
-        } else {
-            return nextStateIdx;
-        }
-    } 
-
-    if (currState.infinite === true) {
-        return -2;
-    } else {
-        return -1;
-    }
-};
-
 /* @param {string} s -> string
  *        {string} p -> pattern
  * @return {boolean}
  */
 var isMatch = function(s, p) {
-    var states = makeStates(p),
-        currStateIdx = 0,
-        nextStateIdx = null;
-    console.info('-----------------');
-    console.info('states:' + JSON.stringify(states) +
-                 ',p:' + p);
-    for (var i=0, l=s.length; i<l; ) {
-        var char = s[i];
-        nextStateIdx = nextState(states, currStateIdx, currStateIdx+1, char);
-        console.info('  i:' + i +
-                     ',char:' + char +
-                     ',curr Idx:' + currStateIdx +
-                     ',next Idx:' + nextStateIdx +
-                     ',currState:' + JSON.stringify(states[currStateIdx]) +
-                     ',nextState:' + JSON.stringify(states[nextStateIdx]));
-        if (nextStateIdx === -1) {
-            return false;
-        } else if (nextStateIdx == -2) {
-            currStateIdx++;
-        } else {
-            currStateIdx = nextStateIdx;
-            i ++;
+    /* M[i][j]: s[0...i-1] is match p[0...j-1]
+     * M[0][0]: '' is match '' -> true
+     * M[0][j]: '' is match p[0...j-1]
+     */
+    var sL = s.length,
+        pL = p.length,
+        M = [];
+    for (var i = 0; i <= sL; i++) {
+        M.push(new Array(pL + 1));
+    }
+    M[0][0] = true;
+    /* M[0][j]: '' is match p[0...j-1]
+     * M[0][j] = p[j-1] == '*' and M[0][j-2]
+     */
+    for (var j = 1; j <= pL; j++) {
+        M[0][j] = false;
+        if (p[j-1] === '*' &&
+            (j>1 && M[0][j-2]))
+                M[0][j] = true;
+    }
+    /* M[i][0]: s[0...i-1] is match ''
+     * M[i][0] = false
+     */
+    for (var i=1; i<=sL; i++) {
+        M[i][0] = false;
+    }
+    /* if p[j-1] == s[i-1] then M[i][j] = M[i-1][j-1]
+     * if p[j-1] == '.'  then M[i][j] = M[i-1][j-1]
+     * if p[j-1] == '*'  then
+     *     if p[j-2] != s[i-1] and p[j-2] != '.'  // empty
+     *         then M[i][j] = M[i][j-2]
+     *     if p[j-2] == s[i-1] or  p[j-2] == '.'  // empty, single, multiple
+     *         then M[i][j] = M[i][j-2] || M[i][j-1] || M[i-1][j]
+     */
+    for (var i=1; i<=sL; i++) {
+        for (var j=1; j<=pL; j++) {
+            if (p[j-1] === s[i-1] || p[j-1] === '.') {
+                M[i][j] = M[i-1][j-1];
+            } else if (p[j-1] === '*') {
+                if (p[j-2] !== s[i-1] && p[j-2] !== '.') {
+                    M[i][j] = M[i][j-2];
+                } else {
+                    M[i][j] = M[i][j-2] || M[i][j-1] || M[i-1][j];
+                }
+            } else {
+                M[i][j] = false;
+            }
         }
     }
-    if ((currStateIdx > states.length - 1) ||
-        (currStateIdx === states.length - 1 && states[currStateIdx].infinite === true)
-       )
-        return true;
-    else
-        return false;
+    console.info('-------------------');
+    console.info('  s:' + s + ',p:' + p);
+    console.info('  M[][]:' + JSON.stringify(M));
+    return M[sL][pL];
 };
 
 module.exports = isMatch;
