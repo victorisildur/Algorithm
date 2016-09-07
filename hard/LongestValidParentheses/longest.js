@@ -10,7 +10,7 @@ var longestValidParentheses = function(s) {
         P[i] = new Array(l);
     }
     console.log('-------------');
-    console.log('  s:' + s + ',l:' + l);
+    console.log('  s:' + s + ' ,l:' + l);
     /* P[i][j]:   s[i...j] is good parenthesis, 0<=i<j<l
      * P[k][k]:   s[k] -> false
      * P[k+1][k]: empty char -> true
@@ -40,37 +40,18 @@ var longestValidParentheses = function(s) {
     for (var d = 3; d < l; d = d + 2) {
         for (var i = 0; i + d < l; i++) {
             var j = i + d;
-	    if (s[i] === '(' &&
-		s[j] === ')' &&
-		P[i+1][j-1]
+	    /* we only need to decrease the d by 2
+	     * there are 3 possible ways:
+	     * 1. ( ... )
+	     * 2. () ...
+	     * 3. ... ()
+	     */
+	    if ((s[i] === '(' && s[j] === ')' && P[i+1][j-1]) ||
+		(P[i][i+1] && P[i+2][j]) ||
+		(P[i][j-2] && P[j-1][j])
 	       ) {
 		P[i][j] = true;
 		max = Math.max(max, j-i+1);
-	    }
-	    /* d = 2^k - 1, k = 2,3,...logL
-	     * d + 1 = 2        2^k - 2
-	     *         4        2^k - 4
-	     *         6        2^k - 6
-	     *         ...
-	     *         2^k - 2  2
-	     * in total 2^(k-1)-1 = (d-1)/2 combination
-	     * we can enumerate them to see if there is P(t) and P(s) comb
-	     * or P(t) xor P(s) comb
-	     */
-	    for (var m = 1; m <= (d-1) / 2; m++) {
-		var mid = i + m*2 - 1,
-		    Ps = P[i][mid],
-		    Pt = P[mid+1][j];
-		if (Ps && Pt) {
-		    P[i][j] = true;
-		    max = Math.max(max, j-i+1);
-		    break;
-		} else if (Ps !== Pt) {
-		    P[i][j] = false;
-		    break;
-		} else {
-		    continue;
-		}
 	    }
         }
     }
