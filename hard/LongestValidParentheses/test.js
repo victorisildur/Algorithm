@@ -37,4 +37,8 @@ expect(
     longest('(())()')
 ).toEqual(6);
 
+expect(
+    longest('"((()))())"')
+).toEqual(8);
+
 console.info('pass tests');
