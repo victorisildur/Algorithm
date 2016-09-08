@@ -1,8 +1,8 @@
-## What Algorithm?
+## What Algorithms
 
 Leetcode problems~
 
-## Java vs Javascript?
+## Java vs Javascript
 
 95% code are written in Java.
 But I'm trying to do more Javascript and python here.
