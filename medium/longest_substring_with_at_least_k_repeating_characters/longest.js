@@ -11,15 +11,12 @@ var longest = function(s, k) {
     }
 
     // search a too few char, divide by removing it
-    for (var char in set) {
+    for (var i=0; i<len; i++) {
+        var char = s[i];
         if (set[char] < k) {
-            for (var i=0; i<len; i++) {
-                if (s[i] === char) {
-                    var left = longest(s.slice(0, i), k),
-                        right = longest(s.slice(i+1, len), k);
-                    return Math.max(left, right);
-                }
-            }
+            var left = longest(s.slice(0, i), k),
+                right = longest(s.slice(i+1, len), k);
+            return Math.max(left, right);
         }
     }
     return len;
