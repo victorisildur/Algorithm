@@ -25,5 +25,26 @@ expect(
     longest('abcdefgh', 1)
 ).toEqual(8);
 
+// TLE
+expect(
+    longest('aaaaaaaaaaaaaaaaaaaa', 20)
+).toEqual(20);
+
+// TLE
+expect(
+    longest('abcdefghijklmnopqrstuvwxyz', 2)
+).toEqual(0);
+
+
+// TLE
+expect(
+    longest('aaabbbcdefcdefgggggggggggggggcde', 3)
+).toEqual(15);
+
+// wrong answer
+expect(
+    longest('ababacb', 3)
+).toEqual(0);
+
 
 console.info('tests passed');
